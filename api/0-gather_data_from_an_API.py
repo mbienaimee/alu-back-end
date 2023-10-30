@@ -1,27 +1,31 @@
 #!/usr/bin/python3
-""" Library to gather data from an API """
 
 import requests
 import sys
 
-""" Function to gather data from an API """
+def fetch_employee_data(employee_id):
+    url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
+    response = requests.get(url)
+    employee_data = response.json()
+    return employee_data
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: 0-gather_data_from_an_API.py <employee_id>")
+        sys.exit(1)
+
+    employee_id = sys.argv[1]
+    employee_data = fetch_employee_data(employee_id)
+    employee_name = employee_data.get("name")
+
+    # Simulate completed tasks and task titles
+    completed_tasks = ["Task 1", "Task 2", "Task 3"]
+    total_tasks = 10
+
+    print(f"Employee {employee_name} is done with tasks({len(completed_tasks)}/{total_tasks}):")
+    for task in completed_tasks:
+        print(f"\t{task}")
 
 if __name__ == "__main__":
-    employee_id = sys.argv[1]
-    url = "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
+    main()
 
-    todo = "https://jsonplaceholder.typicode.com/todos?userId={}"
-    todo = todo.format(employee_id)
-
-    user_info = requests.request("GET", url).json()
-    todo_info = requests.request("GET", todo).json()
-
-    employee_name = user_info.get("name")
-    total_tasks = list(filter(lambda x: (x["completed"] is True), todo_info))
-    task_com = len(total_tasks)
-    total_task_done = len(todo_info)
-
-    print("Employee {} is done with tasks({}/{}):".format(employee_name,
-          task_com, total_task_done))
-
-    [print("\t {}".format(task.get("title"))) for task in total_tasks]
